@@ -1,3 +1,4 @@
+
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
@@ -6,11 +7,10 @@ const firebaseConfig = {
   authDomain: "indianotpin-fdce5.firebaseapp.com",
   projectId: "indianotpin-fdce5",
   storageBucket: "indianotpin-fdce5.applestorage.com",
-  // No need for app ID as email/password auth doesn't require it
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
