@@ -2,7 +2,8 @@ import {
   users, type User, type InsertUser, 
   transactions, type Transaction, type InsertTransaction, 
   otpHistory, type OtpHistory, type InsertOtpHistory,
-  referrals, type Referral, type InsertReferral
+  referrals, type Referral, type InsertReferral,
+  balanceRequests, type BalanceRequest, type InsertBalanceRequest
 } from "@shared/schema";
 
 // Interface for storage operations
@@ -14,18 +15,25 @@ export interface IStorage {
   updateUserBalance(id: number, amount: number): Promise<User | undefined>;
   
   // Transaction operations
-  createTransaction(transaction: any): Promise<Transaction>;
+  createTransaction(transaction: InsertTransaction): Promise<Transaction>;
   getUserTransactions(userId: number): Promise<Transaction[]>;
   
   // OTP History operations
-  createOtpHistory(otpHistory: any): Promise<OtpHistory>;
+  createOtpHistory(otpHistory: InsertOtpHistory): Promise<OtpHistory>;
   getUserOtpHistory(userId: number): Promise<OtpHistory[]>;
   clearUserOtpHistory(userId: number): Promise<void>;
   
   // Referral operations
-  createReferral(referral: any): Promise<Referral>;
+  createReferral(referral: InsertReferral): Promise<Referral>;
   getUserReferrals(userId: number): Promise<Referral[]>;
   markReferralCredited(id: number): Promise<Referral | undefined>;
+  
+  // Balance Request operations
+  createBalanceRequest(request: InsertBalanceRequest): Promise<BalanceRequest>;
+  getBalanceRequest(id: number): Promise<BalanceRequest | undefined>;
+  getUserBalanceRequests(userId: number): Promise<BalanceRequest[]>;
+  getAllBalanceRequests(): Promise<BalanceRequest[]>;
+  updateBalanceRequestStatus(id: number, status: string, adminId?: number): Promise<BalanceRequest | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -33,27 +41,41 @@ export class MemStorage implements IStorage {
   private transactions: Map<number, Transaction>;
   private otpHistories: Map<number, OtpHistory>;
   private referrals: Map<number, Referral>;
+  private balanceRequests: Map<number, BalanceRequest>;
   private userIdCounter: number;
   private transactionIdCounter: number;
   private otpHistoryIdCounter: number;
   private referralIdCounter: number;
+  private balanceRequestIdCounter: number;
 
   constructor() {
     this.users = new Map();
     this.transactions = new Map();
     this.otpHistories = new Map();
     this.referrals = new Map();
+    this.balanceRequests = new Map();
     this.userIdCounter = 1;
     this.transactionIdCounter = 1;
     this.otpHistoryIdCounter = 1;
     this.referralIdCounter = 1;
+    this.balanceRequestIdCounter = 1;
     
     // Create a demo user
     this.createUser({
       username: "demo",
       password: "password",
       referralCode: "DEMO2023",
-      referredBy: null
+      referredBy: null,
+      isAdmin: false
+    });
+    
+    // Create an admin user
+    this.createUser({
+      username: "indianotp.in",
+      password: "Achara",
+      referralCode: "ADMIN2023",
+      referredBy: null,
+      isAdmin: true
     });
     
     // Add some balance
@@ -78,7 +100,18 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
-    const user: User = { ...insertUser, id, balance: 0 };
+    
+    // Ensure the required properties are present
+    const user: User = {
+      id,
+      username: insertUser.username,
+      password: insertUser.password,
+      balance: 0,
+      referralCode: insertUser.referralCode,
+      referredBy: insertUser.referredBy || null,
+      isAdmin: insertUser.isAdmin || false
+    };
+    
     this.users.set(id, user);
     return user;
   }
@@ -162,6 +195,52 @@ export class MemStorage implements IStorage {
     const updatedReferral = { ...referral, credited: true };
     this.referrals.set(id, updatedReferral);
     return updatedReferral;
+  }
+  
+  async createBalanceRequest(insertRequest: InsertBalanceRequest): Promise<BalanceRequest> {
+    const id = this.balanceRequestIdCounter++;
+    const timestamp = new Date();
+    
+    const request: BalanceRequest = {
+      ...insertRequest,
+      id,
+      timestamp,
+      approvedBy: null,
+      approvedAt: null,
+    };
+    
+    this.balanceRequests.set(id, request);
+    return request;
+  }
+  
+  async getBalanceRequest(id: number): Promise<BalanceRequest | undefined> {
+    return this.balanceRequests.get(id);
+  }
+  
+  async getUserBalanceRequests(userId: number): Promise<BalanceRequest[]> {
+    return Array.from(this.balanceRequests.values())
+      .filter(request => request.userId === userId)
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  }
+  
+  async getAllBalanceRequests(): Promise<BalanceRequest[]> {
+    return Array.from(this.balanceRequests.values())
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  }
+  
+  async updateBalanceRequestStatus(id: number, status: string, adminId?: number): Promise<BalanceRequest | undefined> {
+    const request = this.balanceRequests.get(id);
+    if (!request) return undefined;
+    
+    const updatedRequest: BalanceRequest = {
+      ...request,
+      status,
+      approvedBy: adminId || null,
+      approvedAt: status !== "pending" ? new Date() : null,
+    };
+    
+    this.balanceRequests.set(id, updatedRequest);
+    return updatedRequest;
   }
 }
 

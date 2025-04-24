@@ -9,6 +9,7 @@ export const users = pgTable("users", {
   balance: integer("balance").notNull().default(0),
   referralCode: text("referral_code").notNull().unique(),
   referredBy: text("referred_by"),
+  isAdmin: boolean("is_admin").default(false).notNull(),
 });
 
 export const transactions = pgTable("transactions", {
@@ -37,12 +38,24 @@ export const referrals = pgTable("referrals", {
   credited: boolean("credited").notNull().default(false),
 });
 
+export const balanceRequests = pgTable("balance_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  amount: integer("amount").notNull(),
+  utrNumber: text("utr_number").notNull(),
+  status: text("status").notNull().default("pending"), // "pending", "approved", "rejected"
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  approvedBy: integer("approved_by"),
+  approvedAt: timestamp("approved_at"),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   referralCode: true,
   referredBy: true,
+  isAdmin: true,
 });
 
 export const insertTransactionSchema = createInsertSchema(transactions).pick({
@@ -64,12 +77,25 @@ export const insertReferralSchema = createInsertSchema(referrals).pick({
   referredId: true,
 });
 
+export const insertBalanceRequestSchema = createInsertSchema(balanceRequests).pick({
+  userId: true,
+  amount: true,
+  utrNumber: true,
+  status: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type InsertTransaction = z.infer<typeof insertTransactionSchema>;
+export type InsertOtpHistory = z.infer<typeof insertOtpHistorySchema>;
+export type InsertReferral = z.infer<typeof insertReferralSchema>;
+export type InsertBalanceRequest = z.infer<typeof insertBalanceRequestSchema>;
+
 export type User = typeof users.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
 export type OtpHistory = typeof otpHistory.$inferSelect;
 export type Referral = typeof referrals.$inferSelect;
+export type BalanceRequest = typeof balanceRequests.$inferSelect;
 
 // API Types
 export type UserResponse = {
