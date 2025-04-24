@@ -57,6 +57,20 @@ const Login: React.FC = () => {
         // Login with your existing UserContext
         await login(username, values.password);
         
+        // Check if the user is admin
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const userData = JSON.parse(storedUser);
+          if (userData.isAdmin) {
+            toast({
+              title: 'Admin Login Successful',
+              description: 'Welcome to the admin panel!',
+            });
+            navigate('/admin');
+            return;
+          }
+        }
+        
         toast({
           title: 'Login Successful',
           description: 'Welcome back!',

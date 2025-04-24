@@ -19,6 +19,7 @@ import History from "@/pages/History";
 import SmsCheck from "@/pages/SmsCheck";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
+import AdminPanel from "@/pages/AdminPanel";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/refer" component={Refer} />
       <Route path="/history" component={History} />
       <Route path="/sms-check" component={SmsCheck} />
+      <Route path="/admin" component={AdminPanel} />
       <Route component={NotFound} />
     </Switch>
   );

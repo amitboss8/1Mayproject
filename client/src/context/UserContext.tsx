@@ -12,6 +12,7 @@ type UserType = {
   balance: number;
   referralCode: string;
   email?: string;
+  isAdmin?: boolean;
 };
 
 type UserContextType = {
