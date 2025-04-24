@@ -30,6 +30,7 @@ function Router() {
       <Route path="/wallet" component={Wallet} />
       <Route path="/get-otp" component={GetOTP} />
       <Route path="/support" component={CustomerSupport} />
+      <Route path="/customer-support" component={CustomerSupport} />
       <Route path="/contact" component={Contact} />
       <Route path="/terms" component={Terms} />
       <Route path="/refer" component={Refer} />
