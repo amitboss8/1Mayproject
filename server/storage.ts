@@ -201,9 +201,13 @@ export class MemStorage implements IStorage {
     const id = this.balanceRequestIdCounter++;
     const timestamp = new Date();
     
+    // Ensure required properties are set
     const request: BalanceRequest = {
-      ...insertRequest,
       id,
+      userId: insertRequest.userId,
+      amount: insertRequest.amount,
+      utrNumber: insertRequest.utrNumber,
+      status: insertRequest.status || "pending",
       timestamp,
       approvedBy: null,
       approvedAt: null,

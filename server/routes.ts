@@ -8,7 +8,8 @@ import {
   insertUserSchema, 
   insertTransactionSchema, 
   insertOtpHistorySchema,
-  insertReferralSchema
+  insertReferralSchema,
+  insertBalanceRequestSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -38,6 +39,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUser(Number(userId));
       if (!user) {
         return res.status(401).json({ message: "User not found" });
+      }
+      
+      // Add user to request
+      (req as any).user = user;
+      next();
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+  
+  // Admin middleware
+  const authenticateAdmin = async (req: Request, res: Response, next: Function) => {
+    try {
+      const userId = req.headers["x-user-id"];
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
+      const user = await storage.getUser(Number(userId));
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+      
+      if (!user.isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
       }
       
       // Add user to request
@@ -255,6 +281,134 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const referrals = await storage.getUserReferrals(user.id);
       return res.status(200).json(referrals);
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Balance Request routes
+  app.post("/api/wallet/balance-request", authenticate, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      const { amount, utrNumber } = req.body;
+      
+      if (!amount || typeof amount !== 'number' || amount <= 0) {
+        return res.status(400).json({ message: "Valid amount is required" });
+      }
+      
+      if (!utrNumber || typeof utrNumber !== 'string' || utrNumber.trim() === '') {
+        return res.status(400).json({ message: "Valid UTR number is required" });
+      }
+      
+      // Create balance request
+      const balanceRequest = await storage.createBalanceRequest({
+        userId: user.id,
+        amount,
+        utrNumber,
+        status: "pending"
+      });
+      
+      return res.status(201).json(balanceRequest);
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  app.get("/api/wallet/balance-requests", authenticate, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      
+      const requests = await storage.getUserBalanceRequests(user.id);
+      return res.status(200).json(requests);
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  // Admin routes for Balance Requests
+  app.get("/api/admin/balance-requests", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const requests = await storage.getAllBalanceRequests();
+      return res.status(200).json(requests);
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  app.post("/api/admin/balance-requests/:id/approve", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const admin = (req as any).user;
+      const requestId = parseInt(req.params.id);
+      
+      if (isNaN(requestId)) {
+        return res.status(400).json({ message: "Invalid request ID" });
+      }
+      
+      // Get the balance request
+      const balanceRequest = await storage.getBalanceRequest(requestId);
+      if (!balanceRequest) {
+        return res.status(404).json({ message: "Balance request not found" });
+      }
+      
+      if (balanceRequest.status !== "pending") {
+        return res.status(400).json({ message: "Balance request has already been processed" });
+      }
+      
+      // Update request status
+      const updatedRequest = await storage.updateBalanceRequestStatus(requestId, "approved", admin.id);
+      
+      // Update user balance
+      const user = await storage.getUser(balanceRequest.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const updatedUser = await storage.updateUserBalance(user.id, balanceRequest.amount);
+      
+      // Create transaction record
+      await storage.createTransaction({
+        userId: user.id,
+        amount: balanceRequest.amount,
+        type: "add",
+        note: `Balance request #${requestId} approved`
+      });
+      
+      return res.status(200).json({
+        request: updatedRequest,
+        user: {
+          id: updatedUser?.id,
+          username: updatedUser?.username,
+          balance: updatedUser?.balance
+        }
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  app.post("/api/admin/balance-requests/:id/reject", authenticateAdmin, async (req: Request, res: Response) => {
+    try {
+      const admin = (req as any).user;
+      const requestId = parseInt(req.params.id);
+      
+      if (isNaN(requestId)) {
+        return res.status(400).json({ message: "Invalid request ID" });
+      }
+      
+      // Get the balance request
+      const balanceRequest = await storage.getBalanceRequest(requestId);
+      if (!balanceRequest) {
+        return res.status(404).json({ message: "Balance request not found" });
+      }
+      
+      if (balanceRequest.status !== "pending") {
+        return res.status(400).json({ message: "Balance request has already been processed" });
+      }
+      
+      // Update request status
+      const updatedRequest = await storage.updateBalanceRequestStatus(requestId, "rejected", admin.id);
+      
+      return res.status(200).json(updatedRequest);
     } catch (error) {
       return res.status(500).json({ message: "Internal server error" });
     }
