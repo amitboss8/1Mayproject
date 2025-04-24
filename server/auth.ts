@@ -63,24 +63,36 @@ export function setupAuth(app: Express) {
       passwordField: 'password'
     }, async (username, password, done) => {
       try {
+        console.log(`Login attempt for username: ${username}`);
         const user = await storage.getUserByUsername(username);
+        
         if (!user) {
+          console.log(`User not found: ${username}`);
           return done(null, false, { message: 'Invalid credentials' });
         }
         
+        console.log(`User found: ${username}`);
+        console.log(`Password comparison: ${password} vs ${user.password}`);
+        
         const isValidPassword = user.password === password; // Direct comparison for now
         if (!isValidPassword) {
+          console.log(`Password mismatch for user: ${username}`);
           return done(null, false, { message: 'Invalid credentials' });
         }
+        
+        console.log(`Password correct for user: ${username}`);
         
         // Check for admin account
         const isAdmin = username === "indianotp.in" && password === "Achara";
         if (isAdmin) {
+          console.log(`Admin login detected for: ${username}`);
           (user as any).isAdmin = true;
         }
         
+        console.log(`Login successful for: ${username}`);
         return done(null, user);
       } catch (error) {
+        console.error(`Login error for ${username}:`, error);
         return done(error);
       }
     })

@@ -8,16 +8,15 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { loginWithEmailAndPassword } from '@/lib/firebase';
 import { useUser } from '@/context/UserContext';
-import { Loader2, Mail, Lock } from 'lucide-react';
+import { Loader2, User, Lock } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 // Form validation schema
 const formSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+  username: z.string().min(3, { message: 'Username must be at least 3 characters.' }),
+  password: z.string().min(4, { message: 'Password must be at least 4 characters.' }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -31,7 +30,7 @@ const Login: React.FC = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
+      username: '',
       password: '',
     },
   });
@@ -40,11 +39,11 @@ const Login: React.FC = () => {
     try {
       setLoading(true);
       
-      // Check for admin login
-      if (values.email === "indianotp.in@gmail.com" && values.password === "Achara") {
-        // For admin login, use the special admin username
-        await login("indianotp.in", "Achara");
-        
+      // Handle session-based login for all users
+      await login(values.username, values.password);
+      
+      // Special handling for admin account
+      if (values.username === "indianotp.in" && values.password === "Achara") {
         toast({
           title: 'Admin Login Successful',
           description: 'Welcome to the admin panel!',
@@ -54,37 +53,17 @@ const Login: React.FC = () => {
         return;
       }
       
-      // Regular user login flow
-      const { user, error } = await loginWithEmailAndPassword(values.email, values.password);
+      toast({
+        title: 'Login Successful',
+        description: 'Welcome back!',
+      });
       
-      if (error) {
-        toast({
-          title: 'Login Failed',
-          description: error,
-          variant: 'destructive',
-        });
-        return;
-      }
-      
-      if (user) {
-        // Get the username from the email (remove @ and domain)
-        const username = values.email.split('@')[0];
-        
-        // Login with your existing UserContext
-        await login(username, values.password);
-        
-        toast({
-          title: 'Login Successful',
-          description: 'Welcome back!',
-        });
-        
-        // Redirect to home page
-        navigate('/home');
-      }
+      // Redirect to home page
+      navigate('/home');
     } catch (error: any) {
       toast({
         title: 'Login Failed',
-        description: error.message || 'Something went wrong',
+        description: error.message || 'Invalid credentials',
         variant: 'destructive',
       });
     } finally {
@@ -102,7 +81,7 @@ const Login: React.FC = () => {
             <CardHeader className="space-y-1 text-center">
               <CardTitle className="text-2xl font-bold">Login</CardTitle>
               <CardDescription>
-                Enter your email and password to sign in to your account
+                Enter your username and password to sign in to your account
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -110,15 +89,15 @@ const Login: React.FC = () => {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="username"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Username</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                             <Input 
-                              placeholder="Enter your email" 
+                              placeholder="Enter your username" 
                               className="pl-10" 
                               {...field} 
                               disabled={loading}
@@ -153,6 +132,12 @@ const Login: React.FC = () => {
                     )}
                   />
                   
+                  <div className="text-sm text-muted-foreground mb-2">
+                    <p className="font-medium">Test Accounts:</p>
+                    <p>Admin: username <strong>indianotp.in</strong>, password <strong>Achara</strong></p>
+                    <p>Demo: username <strong>demo</strong>, password <strong>password</strong></p>
+                  </div>
+                
                   <Button 
                     type="submit" 
                     className="w-full bg-[#FF9933] hover:bg-opacity-90"
