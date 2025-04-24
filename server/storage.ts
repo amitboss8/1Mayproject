@@ -5,6 +5,7 @@ import {
   referrals, type Referral, type InsertReferral,
   balanceRequests, type BalanceRequest, type InsertBalanceRequest
 } from "@shared/schema";
+import session from "express-session";
 
 // Interface for storage operations
 export interface IStorage {
@@ -34,6 +35,9 @@ export interface IStorage {
   getUserBalanceRequests(userId: number): Promise<BalanceRequest[]>;
   getAllBalanceRequests(): Promise<BalanceRequest[]>;
   updateBalanceRequestStatus(id: number, status: string, adminId?: number): Promise<BalanceRequest | undefined>;
+  
+  // Session store for authentication
+  sessionStore: session.Store;
 }
 
 export class MemStorage implements IStorage {

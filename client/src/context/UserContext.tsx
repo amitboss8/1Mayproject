@@ -44,110 +44,47 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
   const [, navigate] = useLocation();
 
-  // Check if user is logged in and verify auth status with server
+  // Check if user is logged in with server session
   useEffect(() => {
     const checkAuth = async () => {
       setIsLoading(true);
       try {
-        // First check if we have a user in localStorage
-        const storedUser = localStorage.getItem('user');
-        
-        if (storedUser) {
-          const userData = JSON.parse(storedUser);
+        // Verify user with the server session
+        try {
+          const response = await fetch('/api/user', { 
+            method: 'GET',
+            credentials: 'include'
+          });
           
-          // Verify user with the server
-          try {
-            // Call the /api/user endpoint with the user's ID to verify authentication
-            const headers: Record<string, string> = { 
-              "x-user-id": userData.id.toString() 
+          if (response.ok) {
+            // User is authenticated with server
+            const userData = await response.json();
+            
+            // Check if this is the admin account
+            const isAdmin = userData.username === "indianotp.in";
+            const userWithAdmin = {
+              ...userData,
+              isAdmin
             };
             
-            const response = await fetch('/api/user', { 
-              method: 'GET',
-              headers,
-              credentials: 'include'
-            });
+            setUser(userWithAdmin);
+            localStorage.setItem('user', JSON.stringify(userWithAdmin));
+          } else {
+            // Server authentication failed
+            setUser(null);
+            localStorage.removeItem('user');
             
-            if (response.ok) {
-              // User is authenticated with server
-              const serverUserData = await response.json();
-              
-              // Check if Firebase is also authenticated
-              const firebaseUser = auth.currentUser;
-              
-              // Update the user data with the server data and email from Firebase
-              const updatedUser = {
-                ...serverUserData,
-                email: firebaseUser?.email || userData.email,
-                isAdmin: userData.isAdmin // Preserve admin status
-              };
-              
-              setUser(updatedUser);
-              localStorage.setItem('user', JSON.stringify(updatedUser));
-            } else {
-              // Server authentication failed, check firebase
-              const firebaseUser = auth.currentUser;
-              if (firebaseUser) {
-                // Firebase auth exists but server session expired
-                // Try to log in again silently
-                const username = userData.username;
-                const email = `${username}@indianotp.in`;
-                
-                // Special handling for admin user
-                if (userData.isAdmin) {
-                  try {
-                    // Make a new login request to refresh auth
-                    const response = await apiRequest('POST', '/api/auth/login', { 
-                      username: "indianotp.in", 
-                      password: "Achara" 
-                    });
-                    
-                    if (response.ok) {
-                      const refreshedUserData = await response.json();
-                      const updatedUser = {
-                        ...refreshedUserData,
-                        email: firebaseUser.email,
-                        isAdmin: true
-                      };
-                      
-                      setUser(updatedUser);
-                      localStorage.setItem('user', JSON.stringify(updatedUser));
-                    } else {
-                      throw new Error("Failed to refresh admin session");
-                    }
-                  } catch (error) {
-                    console.error("Error refreshing admin session:", error);
-                    await logoutUser();
-                    setUser(null);
-                    localStorage.removeItem('user');
-                  }
-                } else {
-                  // For regular users, just clear the auth state for now
-                  // They will need to log in again
-                  await logoutUser();
-                  setUser(null);
-                  localStorage.removeItem('user');
-                }
-              } else {
-                // No Firebase user either, clear everything
-                setUser(null);
-                localStorage.removeItem('user');
-              }
+            // Check if Firebase is still logged in, if so log out
+            const firebaseUser = auth.currentUser;
+            if (firebaseUser) {
+              await logoutUser();
             }
-          } catch (error) {
-            console.error("Error verifying authentication:", error);
-            // Don't clear user on network errors to allow offline functionality
           }
-        } else {
-          // Check Firebase auth state
-          const firebaseUser = auth.currentUser;
-          if (firebaseUser) {
-            // Firebase user exists but no local user data
-            // This is an inconsistent state - log out from Firebase
-            await logoutUser();
-          }
-          
+        } catch (error) {
+          console.error("Error verifying authentication:", error);
+          // Session verification failed - clear user
           setUser(null);
+          localStorage.removeItem('user');
         }
       } catch (error) {
         console.error("Authentication check error:", error);
@@ -178,30 +115,44 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       
-      // First authenticate with Firebase (using email as username with @indianotp.in domain)
-      const email = `${username}@indianotp.in`;
-      const { user: firebaseUser, error } = await loginWithEmailAndPassword(email, password);
+      // First try to authenticate with our server session API
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: 'include'
+      });
       
-      if (error) {
-        throw new Error(error);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
       }
       
-      // Then fetch user data from our API
-      const response = await apiRequest('POST', '/api/auth/login', { username, password });
       const userData = await response.json();
+      
+      // Now try Firebase authentication
+      try {
+        // Firebase email uses username@indianotp.in format
+        const email = `${username}@indianotp.in`;
+        await loginWithEmailAndPassword(email, password);
+      } catch (firebaseError) {
+        console.warn('Firebase login error:', firebaseError);
+        // Continue even if Firebase login fails, since we have server session
+      }
       
       // Check if this is the admin account
       const isAdmin = username === "indianotp.in" && password === "Achara";
       
-      // Combine Firebase and API data
-      const userWithEmail = {
+      // Update user data with admin status
+      const userWithAdmin = {
         ...userData,
-        email: firebaseUser?.email,
-        isAdmin: isAdmin
+        isAdmin
       };
       
-      setUser(userWithEmail);
-      localStorage.setItem('user', JSON.stringify(userWithEmail));
+      setUser(userWithAdmin);
+      localStorage.setItem('user', JSON.stringify(userWithAdmin));
       
       toast({
         title: 'Login successful',
@@ -228,30 +179,43 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Create a referral code
       const referralCode = username.substring(0, 4).toUpperCase() + Math.random().toString(36).substring(2, 8).toUpperCase();
       
-      // First register with Firebase (using email as username with @indianotp.in domain)
-      const email = `${username}@indianotp.in`;
-      const { user: firebaseUser, error } = await registerWithEmailAndPassword(email, password);
-      
-      if (error) {
-        throw new Error(error);
+      // Try to register with Firebase first
+      try {
+        const email = `${username}@indianotp.in`;
+        await registerWithEmailAndPassword(email, password);
+      } catch (firebaseError) {
+        console.warn('Firebase registration error:', firebaseError);
+        // Continue even if Firebase registration fails, since we have server session
       }
       
-      // Then register with our API
+      // Register with our server API
       const userData = {
         username,
         password,
         referralCode,
-        referredBy: referredBy || null,
-        email
+        referredBy: referredBy || null
       };
       
-      const response = await apiRequest('POST', '/api/auth/register', userData);
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData),
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+      
       const newUser = await response.json();
       
-      // Combine Firebase and API data
+      // Add admin status (should always be false for new users)
       const userWithEmail = {
         ...newUser,
-        email: firebaseUser?.email
+        isAdmin: false
       };
       
       setUser(userWithEmail);
@@ -265,7 +229,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       navigate('/home');
     } catch (error) {
       // If there's an error, make sure to clean up Firebase user if it was created
-      await logoutUser();
+      try {
+        await logoutUser();
+      } catch (e) {
+        console.error('Error logging out after registration failure:', e);
+      }
       
       toast({
         title: 'Registration failed',
@@ -280,10 +248,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Logout function
   const logout = async () => {
     try {
-      // Log out from Firebase first
+      // Log out from server session
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      // Log out from Firebase
       await logoutUser();
       
-      // Then clear local state
+      // Clear local state
       setUser(null);
       localStorage.removeItem('user');
       
