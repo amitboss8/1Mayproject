@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Import QR code
-import paymentQRData from '@/assets/payment-qr.txt';
+import paymentQRImage from '@/assets/payment-qr.jpg';
 
 // Define transaction type
 type Transaction = {
@@ -178,7 +178,7 @@ const Wallet: React.FC = () => {
           <div className="flex justify-center my-4">
             <div className="bg-white p-2 rounded-lg mb-2 max-w-[200px] mx-auto">
               <img 
-                src={paymentQRData}
+                src={paymentQRImage}
                 alt="UPI Payment QR Code" 
                 className="w-full h-auto"
               />
