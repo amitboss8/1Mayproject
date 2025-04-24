@@ -136,6 +136,9 @@ const Login: React.FC = () => {
                     <p className="font-medium">Test Accounts:</p>
                     <p>Admin: username <strong>indianotp.in</strong>, password <strong>Achara</strong></p>
                     <p>Demo: username <strong>demo</strong>, password <strong>password</strong></p>
+                    <p className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded border border-yellow-200 dark:border-yellow-800">
+                      <strong>Note:</strong> Please use these credentials exactly as shown. The system uses username-based authentication, not email.
+                    </p>
                   </div>
                 
                   <Button 

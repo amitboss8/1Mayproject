@@ -38,8 +38,8 @@ export async function comparePasswords(supplied: string, stored: string) {
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || 'indianotp-secret-key-2025',
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     store: new PostgresSessionStore({ 
       pool, 
       createTableIfMissing: true,
@@ -48,7 +48,8 @@ export function setupAuth(app: Express) {
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Set to false for development
+      sameSite: 'lax'
     }
   };
 

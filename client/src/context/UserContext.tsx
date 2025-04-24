@@ -115,7 +115,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       
-      // First try to authenticate with our server session API
+      console.log('Attempting login for:', username);
+      
+      // Authenticate with our server session API
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -125,22 +127,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         credentials: 'include'
       });
       
+      console.log('Login response status:', response.status);
+      
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('Login error:', errorData);
         throw new Error(errorData.message || 'Login failed');
       }
       
       const userData = await response.json();
-      
-      // Now try Firebase authentication
-      try {
-        // Firebase email uses username@indianotp.in format
-        const email = `${username}@indianotp.in`;
-        await loginWithEmailAndPassword(email, password);
-      } catch (firebaseError) {
-        console.warn('Firebase login error:', firebaseError);
-        // Continue even if Firebase login fails, since we have server session
-      }
+      console.log('Login successful, user data:', userData);
       
       // Check if this is the admin account
       const isAdmin = username === "indianotp.in" && password === "Achara";
@@ -154,18 +150,32 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(userWithAdmin);
       localStorage.setItem('user', JSON.stringify(userWithAdmin));
       
+      // After successful login, fetch the user data to ensure the session is working
+      const userCheckResponse = await fetch('/api/user', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      
+      console.log('Session check response:', userCheckResponse.status);
+      
+      if (!userCheckResponse.ok) {
+        console.warn('Session not established properly');
+      } else {
+        console.log('Session confirmed working');
+      }
+      
       toast({
         title: 'Login successful',
         description: `Welcome back, ${userData.username}!`,
       });
-      
-      navigate('/home');
     } catch (error) {
+      console.error('Login error:', error);
       toast({
         title: 'Login failed',
         description: error instanceof Error ? error.message : 'An error occurred',
         variant: 'destructive',
       });
+      throw error; // Rethrow so the component can handle it
     } finally {
       setIsLoading(false);
     }
