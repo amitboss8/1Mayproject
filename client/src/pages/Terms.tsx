@@ -184,15 +184,8 @@ const Terms: React.FC = () => {
                   </p>
                 </div>
               </div>
-                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
-                    <i className="fas fa-shield-alt mr-2"></i>
-                    What is IndianOTP's verification service?
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    IndianOTP.in provides instant virtual phone numbers for receiving OTP verification codes. Our service is designed for testing and verification purposes, offering reliable and secure OTP reception across multiple platforms.
-                  </p>
-                </div>
+            </CardContent>
+          </Card>
 
                 <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
