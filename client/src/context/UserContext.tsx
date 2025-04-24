@@ -45,34 +45,41 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check if user is logged in with Firebase
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        // Firebase user exists, check if we have the user in local storage
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          const userData = JSON.parse(storedUser);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      try {
+        if (firebaseUser) {
+          // Get fresh token
+          const token = await firebaseUser.getIdToken(true);
+          localStorage.setItem('authToken', token);
           
-          // Add email from Firebase to the user data
-          const updatedUser = {
-            ...userData,
-            email: firebaseUser.email || undefined
-          };
-          
-          setUser(updatedUser);
+          // Get or refresh user data from API
+          const response = await apiRequest('GET', '/api/auth/me', null, true);
+          if (response.ok) {
+            const userData = await response.json();
+            const updatedUser = {
+              ...userData,
+              email: firebaseUser.email || undefined
+            };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+          } else {
+            throw new Error('Failed to get user data');
+          }
         } else {
-          // If we don't have user data in local storage but have a Firebase user,
-          // we'll log them out for consistency
-          logoutUser();
+          setUser(null);
+          localStorage.removeItem('user');
+          localStorage.removeItem('authToken');
         }
-      } else {
-        // No Firebase user, clear local user
+      } catch (error) {
+        console.error('Auth state sync error:', error);
         setUser(null);
         localStorage.removeItem('user');
+        localStorage.removeItem('authToken');
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     });
 
-    // Cleanup subscription
     return () => unsubscribe();
   }, []);
 

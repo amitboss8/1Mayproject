@@ -32,19 +32,37 @@ export async function apiRequest(
   }
 
   try {
-    const response = await fetch(path, {
+    let response = await fetch(path, {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
       credentials: 'include'
     });
 
-    // Handle 401 by clearing auth state
     if (response.status === 401) {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-      throw new Error('Session expired');
+      // Try to refresh token
+      const firebaseUser = auth.currentUser;
+      if (firebaseUser) {
+        const newToken = await firebaseUser.getIdToken(true);
+        localStorage.setItem('authToken', newToken);
+        
+        // Retry request with new token
+        headers['Authorization'] = `Bearer ${newToken}`;
+        response = await fetch(path, {
+          method,
+          headers,
+          body: body ? JSON.stringify(body) : undefined,
+          credentials: 'include'
+        });
+      }
+
+      // If still unauthorized after refresh
+      if (response.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        throw new Error('Session expired');
+      }
     }
 
     return response;
