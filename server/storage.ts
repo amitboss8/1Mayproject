@@ -51,6 +51,7 @@ export class MemStorage implements IStorage {
   private otpHistoryIdCounter: number;
   private referralIdCounter: number;
   private balanceRequestIdCounter: number;
+  sessionStore: session.Store;
 
   constructor() {
     this.users = new Map();
@@ -63,6 +64,12 @@ export class MemStorage implements IStorage {
     this.otpHistoryIdCounter = 1;
     this.referralIdCounter = 1;
     this.balanceRequestIdCounter = 1;
+    
+    // Create a memory store for sessions
+    const MemoryStore = require('memorystore')(session);
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    });
     
     // Create a demo user
     this.createUser({
@@ -252,4 +259,149 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database implementation of IStorage
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
+import connectPg from "connect-pg-simple";
+import { pool } from "./db";
+
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
+  
+  constructor() {
+    const PostgresSessionStore = connectPg(session);
+    this.sessionStore = new PostgresSessionStore({ 
+      pool, 
+      createTableIfMissing: true,
+      tableName: 'sessions'
+    });
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  async updateUserBalance(id: number, amount: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    if (!user) return undefined;
+    
+    const [updatedUser] = await db
+      .update(users)
+      .set({ balance: user.balance + amount })
+      .where(eq(users.id, id))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  async createTransaction(insertTransaction: InsertTransaction): Promise<Transaction> {
+    const [transaction] = await db.insert(transactions).values(insertTransaction).returning();
+    return transaction;
+  }
+
+  async getUserTransactions(userId: number): Promise<Transaction[]> {
+    return await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.userId, userId))
+      .orderBy(desc(transactions.timestamp));
+  }
+
+  async createOtpHistory(insertOtpHistory: InsertOtpHistory): Promise<OtpHistory> {
+    const [history] = await db.insert(otpHistory).values(insertOtpHistory).returning();
+    return history;
+  }
+
+  async getUserOtpHistory(userId: number): Promise<OtpHistory[]> {
+    return await db
+      .select()
+      .from(otpHistory)
+      .where(eq(otpHistory.userId, userId))
+      .orderBy(desc(otpHistory.timestamp));
+  }
+
+  async clearUserOtpHistory(userId: number): Promise<void> {
+    await db.delete(otpHistory).where(eq(otpHistory.userId, userId));
+  }
+
+  async createReferral(insertReferral: InsertReferral): Promise<Referral> {
+    const [referral] = await db.insert(referrals).values(insertReferral).returning();
+    return referral;
+  }
+
+  async getUserReferrals(userId: number): Promise<Referral[]> {
+    return await db
+      .select()
+      .from(referrals)
+      .where(eq(referrals.referrerId, userId))
+      .orderBy(desc(referrals.timestamp));
+  }
+
+  async markReferralCredited(id: number): Promise<Referral | undefined> {
+    const [referral] = await db
+      .update(referrals)
+      .set({ credited: true })
+      .where(eq(referrals.id, id))
+      .returning();
+    
+    return referral;
+  }
+
+  async createBalanceRequest(insertRequest: InsertBalanceRequest): Promise<BalanceRequest> {
+    const [request] = await db.insert(balanceRequests).values(insertRequest).returning();
+    return request;
+  }
+
+  async getBalanceRequest(id: number): Promise<BalanceRequest | undefined> {
+    const [request] = await db.select().from(balanceRequests).where(eq(balanceRequests.id, id));
+    return request;
+  }
+
+  async getUserBalanceRequests(userId: number): Promise<BalanceRequest[]> {
+    return await db
+      .select()
+      .from(balanceRequests)
+      .where(eq(balanceRequests.userId, userId))
+      .orderBy(desc(balanceRequests.timestamp));
+  }
+
+  async getAllBalanceRequests(): Promise<BalanceRequest[]> {
+    return await db
+      .select()
+      .from(balanceRequests)
+      .orderBy(desc(balanceRequests.timestamp));
+  }
+
+  async updateBalanceRequestStatus(id: number, status: string, adminId?: number): Promise<BalanceRequest | undefined> {
+    const updates: any = { 
+      status,
+      approvedBy: adminId || null
+    };
+    
+    if (status !== "pending") {
+      updates.approvedAt = new Date();
+    }
+    
+    const [updatedRequest] = await db
+      .update(balanceRequests)
+      .set(updates)
+      .where(eq(balanceRequests.id, id))
+      .returning();
+    
+    return updatedRequest;
+  }
+}
+
+// Use DatabaseStorage instead of MemStorage
+export const storage = new DatabaseStorage();
