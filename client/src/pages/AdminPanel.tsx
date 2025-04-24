@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
@@ -23,12 +24,6 @@ type BalanceRequest = {
   timestamp: string;
   approvedBy: number | null;
   approvedAt: string | null;
-};
-
-type User = {
-  id: number;
-  username: string;
-  balance: number;
 };
 
 const AdminPanel: React.FC = () => {
