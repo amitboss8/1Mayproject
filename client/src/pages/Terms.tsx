@@ -116,6 +116,66 @@ const Terms: React.FC = () => {
               </p>
             </CardContent>
           </Card>
+
+          <Card className="max-w-3xl mx-auto mt-8">
+            <CardHeader>
+              <CardTitle>Frequently Asked Questions (FAQ)</CardTitle>
+            </CardHeader>
+            <CardContent className="prose dark:prose-invert max-w-none">
+              <h3>What is IndianOTP.in?</h3>
+              <p>
+                IndianOTP.in is a professional SMS OTP verification service that provides temporary phone numbers for receiving verification codes. Our platform enables users to bypass phone verification requirements safely and securely.
+              </p>
+
+              <h3>How does the service work?</h3>
+              <p>
+                1. Select a service from our extensive list<br/>
+                2. Pay the specified amount (starting from ₹1.13)<br/>
+                3. Receive your OTP instantly<br/>
+                4. Use the OTP for your verification needs
+              </p>
+
+              <h3>Is this service legal?</h3>
+              <p>
+                Yes, our service is completely legal. We provide virtual numbers for legitimate verification purposes. However, users are responsible for using the service in accordance with local laws and regulations.
+              </p>
+
+              <h3>What payment methods do you accept?</h3>
+              <p>
+                We accept all major UPI payment methods including Google Pay, PhonePe, Paytm, and other UPI-enabled apps. Payments are processed instantly and securely.
+              </p>
+
+              <h3>How long does it take to receive an OTP?</h3>
+              <p>
+                OTPs are generated instantly upon successful payment. Our automated system ensures immediate delivery of verification codes.
+              </p>
+
+              <h3>Are my transactions secure?</h3>
+              <p>
+                Yes, we prioritize security. All transactions are encrypted, and we don't store sensitive payment information. Our platform uses industry-standard security protocols.
+              </p>
+
+              <h3>Can I get a refund?</h3>
+              <p>
+                Due to the instant nature of our service, we cannot provide refunds once an OTP has been generated. Please ensure you select the correct service before proceeding.
+              </p>
+
+              <h3>What if I don't receive my OTP?</h3>
+              <p>
+                In the rare case of OTP delivery issues, our 24/7 customer support team is available to assist you. Contact us immediately through our support channels.
+              </p>
+
+              <h3>Do you keep records of OTPs?</h3>
+              <p>
+                For security and privacy reasons, we do not permanently store OTPs. They are automatically deleted from our system after a short period.
+              </p>
+
+              <h3>Is there a limit to how many OTPs I can request?</h3>
+              <p>
+                While there's no strict limit, we monitor usage patterns to prevent abuse. Multiple requests within a short timeframe may be flagged for security review.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </main>
       
