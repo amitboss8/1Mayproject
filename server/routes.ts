@@ -11,8 +11,12 @@ import {
   insertReferralSchema,
   insertBalanceRequestSchema
 } from "@shared/schema";
+import { setupAuth, authenticate, authenticateAdmin } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication
+  setupAuth(app);
+  
   // Serve sitemap.xml
   app.get('/sitemap.xml', (req: Request, res: Response) => {
     try {
@@ -28,51 +32,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Auth middleware
-  const authenticate = async (req: Request, res: Response, next: Function) => {
-    try {
-      const userId = req.headers["x-user-id"];
-      if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
-      }
-      
-      const user = await storage.getUser(Number(userId));
-      if (!user) {
-        return res.status(401).json({ message: "User not found" });
-      }
-      
-      // Add user to request
-      (req as any).user = user;
-      next();
-    } catch (error) {
-      return res.status(500).json({ message: "Internal server error" });
-    }
-  };
-  
-  // Admin middleware
-  const authenticateAdmin = async (req: Request, res: Response, next: Function) => {
-    try {
-      const userId = req.headers["x-user-id"];
-      if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
-      }
-      
-      const user = await storage.getUser(Number(userId));
-      if (!user) {
-        return res.status(401).json({ message: "User not found" });
-      }
-      
-      if (!user.isAdmin) {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-      
-      // Add user to request
-      (req as any).user = user;
-      next();
-    } catch (error) {
-      return res.status(500).json({ message: "Internal server error" });
-    }
-  };
+  // Note: We're now using the authentication middleware from auth.ts
 
   // User routes
   app.post("/api/auth/register", async (req: Request, res: Response) => {
