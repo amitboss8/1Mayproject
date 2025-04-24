@@ -8,7 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate, copyToClipboard } from '@/lib/utils';
-import { Loader2, Copy, X } from 'lucide-react';
+import { Loader2, Copy, X, CheckIcon, AlertCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
+// Import QR code
+import paymentQRData from '@/assets/payment-qr.txt';
 
 // Define transaction type
 type Transaction = {
@@ -27,7 +32,7 @@ const Wallet: React.FC = () => {
   const [addAmount, setAddAmount] = useState(100); // Default amount
 
   // Fetch transactions
-  const { data: transactions, isLoading, refetch } = useQuery({
+  const { data: transactions = [], isLoading, refetch } = useQuery<Transaction[]>({
     queryKey: ['/api/wallet/transactions'],
     enabled: !!user,
   });
@@ -65,9 +70,14 @@ const Wallet: React.FC = () => {
     }
   };
 
+  const [upiCopied, setUpiCopied] = useState(false);
+  const upiId = "Amitachara@fam";
+
   const handleCopyUpi = () => {
-    copyToClipboard('indianotp@upi')
+    copyToClipboard(upiId)
       .then(() => {
+        setUpiCopied(true);
+        setTimeout(() => setUpiCopied(false), 2000);
         toast({ title: 'UPI ID Copied', description: 'UPI ID copied to clipboard' });
       })
       .catch(() => {
@@ -166,60 +176,19 @@ const Wallet: React.FC = () => {
           </DialogHeader>
           
           <div className="flex justify-center my-4">
-            <svg 
-              width="200" 
-              height="200" 
-              viewBox="0 0 200 200" 
-              className="border border-gray-200 dark:border-gray-700"
-            >
-              {/* Simple UPI QR code SVG */}
-              <rect x="0" y="0" width="200" height="200" fill="white" />
-              <g fill="black">
-                {/* QR code pattern - simplified version */}
-                <rect x="20" y="20" width="20" height="20" />
-                <rect x="40" y="20" width="20" height="20" />
-                <rect x="60" y="20" width="20" height="20" />
-                <rect x="20" y="40" width="20" height="20" />
-                <rect x="60" y="40" width="20" height="20" />
-                <rect x="20" y="60" width="20" height="20" />
-                <rect x="40" y="60" width="20" height="20" />
-                <rect x="60" y="60" width="20" height="20" />
-                
-                <rect x="120" y="20" width="20" height="20" />
-                <rect x="140" y="20" width="20" height="20" />
-                <rect x="160" y="20" width="20" height="20" />
-                <rect x="120" y="40" width="20" height="20" />
-                <rect x="160" y="40" width="20" height="20" />
-                <rect x="120" y="60" width="20" height="20" />
-                <rect x="140" y="60" width="20" height="20" />
-                <rect x="160" y="60" width="20" height="20" />
-                
-                <rect x="20" y="120" width="20" height="20" />
-                <rect x="40" y="120" width="20" height="20" />
-                <rect x="60" y="120" width="20" height="20" />
-                <rect x="20" y="140" width="20" height="20" />
-                <rect x="60" y="140" width="20" height="20" />
-                <rect x="20" y="160" width="20" height="20" />
-                <rect x="40" y="160" width="20" height="20" />
-                <rect x="60" y="160" width="20" height="20" />
-                
-                <rect x="90" y="90" width="20" height="20" />
-                <rect x="90" y="110" width="20" height="20" />
-                <rect x="110" y="90" width="20" height="20" />
-                
-                <rect x="120" y="120" width="60" height="60" />
-                <rect x="130" y="130" width="40" height="40" fill="white" />
-                <text x="150" y="155" textAnchor="middle" fontSize="20" fontWeight="bold">
-                  UPI
-                </text>
-              </g>
-            </svg>
+            <div className="bg-white p-2 rounded-lg mb-2 max-w-[200px] mx-auto">
+              <img 
+                src={paymentQRData}
+                alt="UPI Payment QR Code" 
+                className="w-full h-auto"
+              />
+            </div>
           </div>
           
           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md flex justify-between items-center">
-            <span className="text-gray-700 dark:text-gray-300">indianotp@upi</span>
+            <span className="text-gray-700 dark:text-gray-300">{upiId}</span>
             <Button variant="ghost" size="icon" onClick={handleCopyUpi}>
-              <Copy className="h-4 w-4" />
+              {upiCopied ? <CheckIcon className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
             </Button>
           </div>
           
