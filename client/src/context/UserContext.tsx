@@ -88,9 +88,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         throw new Error(error);
       }
+
+      // Get Firebase token
+      const token = await firebaseUser?.getIdToken();
+      if (token) {
+        localStorage.setItem('authToken', token);
+      }
       
       // Then fetch user data from our API
-      const response = await apiRequest('POST', '/api/auth/login', { username, password });
+      const response = await apiRequest('POST', '/api/auth/login', { username, password }, true);
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
       const userData = await response.json();
       
       // Combine Firebase and API data
