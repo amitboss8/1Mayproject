@@ -93,15 +93,26 @@ const Header: React.FC<HeaderProps> = ({
               </Button>
             </div>
           ) : (
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={logout}
-              className="hidden md:flex items-center"
-            >
-              <span className="mr-2">Logout</span>
-              <i className="fas fa-sign-out-alt"></i>
-            </Button>
+            <div className="hidden md:flex items-center space-x-2">
+              {user?.isAdmin && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate('/admin')}
+                  className="text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-900 dark:hover:bg-red-950"
+                >
+                  <span className="mr-1">Admin Panel</span>
+                </Button>
+              )}
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={logout}
+              >
+                <span className="mr-2">Logout</span>
+                <i className="fas fa-sign-out-alt"></i>
+              </Button>
+            </div>
           )}
           
           {(showNav || !isLoggedIn) && (
@@ -158,6 +169,18 @@ const Header: React.FC<HeaderProps> = ({
             ) : (
               <>
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-1"></div>
+                {user?.isAdmin && (
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-center py-2 mb-2 text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-900 dark:hover:bg-red-950"
+                    onClick={() => {
+                      navigate('/admin');
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <span>Admin Panel</span>
+                  </Button>
+                )}
                 <Button 
                   variant="ghost" 
                   className="w-full justify-center py-2 text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400"

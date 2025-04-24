@@ -39,6 +39,22 @@ const Login: React.FC = () => {
   const onSubmit = async (values: FormValues) => {
     try {
       setLoading(true);
+      
+      // Check for admin login
+      if (values.email === "indianotp.in@gmail.com" && values.password === "Achara") {
+        // For admin login, use the special admin username
+        await login("indianotp.in", "Achara");
+        
+        toast({
+          title: 'Admin Login Successful',
+          description: 'Welcome to the admin panel!',
+        });
+        
+        navigate('/admin');
+        return;
+      }
+      
+      // Regular user login flow
       const { user, error } = await loginWithEmailAndPassword(values.email, values.password);
       
       if (error) {
@@ -56,20 +72,6 @@ const Login: React.FC = () => {
         
         // Login with your existing UserContext
         await login(username, values.password);
-        
-        // Check if the user is admin
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          const userData = JSON.parse(storedUser);
-          if (userData.isAdmin) {
-            toast({
-              title: 'Admin Login Successful',
-              description: 'Welcome to the admin panel!',
-            });
-            navigate('/admin');
-            return;
-          }
-        }
         
         toast({
           title: 'Login Successful',

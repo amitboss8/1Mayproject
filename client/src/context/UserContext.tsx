@@ -94,10 +94,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await apiRequest('POST', '/api/auth/login', { username, password });
       const userData = await response.json();
       
+      // Check if this is the admin account
+      const isAdmin = username === "indianotp.in" && password === "Achara";
+      
       // Combine Firebase and API data
       const userWithEmail = {
         ...userData,
-        email: firebaseUser?.email
+        email: firebaseUser?.email,
+        isAdmin: isAdmin
       };
       
       setUser(userWithEmail);
