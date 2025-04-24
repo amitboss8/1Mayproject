@@ -26,12 +26,20 @@ const Landing: React.FC = () => {
                 <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
                   Generate secure one-time passwords instantly for all your verification needs.
                 </p>
-                <Button 
-                  className="bg-[#FF9933] hover:bg-opacity-90 text-white font-medium py-3 px-8 rounded-md transition-all shadow-md hover:shadow-lg"
-                  onClick={goToHome}
-                >
-                  Enter App
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button 
+                    className="bg-[#FF9933] hover:bg-opacity-90 text-white font-medium py-3 px-8 rounded-md transition-all shadow-md hover:shadow-lg"
+                    onClick={() => navigate('/login')}
+                  >
+                    Sign In
+                  </Button>
+                  <Button 
+                    className="bg-[#138808] hover:bg-opacity-90 text-white font-medium py-3 px-8 rounded-md transition-all shadow-md hover:shadow-lg"
+                    onClick={() => navigate('/signup')}
+                  >
+                    Create Account
+                  </Button>
+                </div>
               </div>
               <div className="md:w-1/2 md:pl-12">
                 <svg 

@@ -17,11 +17,15 @@ import Terms from "@/pages/Terms";
 import Refer from "@/pages/Refer";
 import History from "@/pages/History";
 import SmsCheck from "@/pages/SmsCheck";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Landing} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
       <Route path="/home" component={Home} />
       <Route path="/wallet" component={Wallet} />
       <Route path="/get-otp" component={GetOTP} />
