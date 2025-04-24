@@ -40,10 +40,7 @@ const Wallet: React.FC = () => {
   // Add balance mutation
   const addBalanceMutation = useMutation({
     mutationFn: async (amount: number) => {
-      const res = await apiRequest('POST', '/api/wallet/add', { amount }, true);
-      if (!res.ok) {
-        throw new Error('Failed to add balance');
-      }
+      const res = await apiRequest('POST', '/api/wallet/add', { amount });
       return res.json();
     },
     onSuccess: (data) => {
@@ -53,19 +50,11 @@ const Wallet: React.FC = () => {
       setIsAddBalanceModalOpen(false);
     },
     onError: (error) => {
-      if (error.message === 'Unauthorized') {
-        toast({ 
-          title: 'Session Expired', 
-          description: 'Please refresh the page to continue',
-          variant: 'destructive'
-        });
-      } else {
-        toast({ 
-          title: 'Failed to add balance', 
-          description: error instanceof Error ? error.message : 'An error occurred',
-          variant: 'destructive'
-        });
-      }
+      toast({ 
+        title: 'Failed to add balance', 
+        description: error instanceof Error ? error.message : 'An error occurred',
+        variant: 'destructive'
+      });
     }
   });
 

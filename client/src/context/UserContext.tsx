@@ -45,51 +45,35 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check if user is logged in with Firebase
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      try {
-        console.log("Auth state changed:", firebaseUser?.email);
-        
-        if (firebaseUser) {
-          // Get fresh token
-          const token = await firebaseUser.getIdToken(true);
-          localStorage.setItem('authToken', token);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // Firebase user exists, check if we have the user in local storage
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const userData = JSON.parse(storedUser);
           
-          // Get or refresh user data from API
-          const response = await apiRequest('GET', '/api/auth/me', null, true);
-          if (response.ok) {
-            const userData = await response.json();
-            const updatedUser = {
-              ...userData,
-              email: firebaseUser.email || undefined,
-              isAuthenticated: true
-            };
-            console.log("Setting user data:", updatedUser);
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-          } else {
-            throw new Error('Failed to get user data');
-          }
+          // Add email from Firebase to the user data
+          const updatedUser = {
+            ...userData,
+            email: firebaseUser.email || undefined
+          };
+          
+          setUser(updatedUser);
         } else {
-          console.log("No user logged in");
-          setUser(null);
-          localStorage.removeItem('user');
-          localStorage.removeItem('authToken');
+          // If we don't have user data in local storage but have a Firebase user,
+          // we'll log them out for consistency
+          logoutUser();
         }
-      } catch (error) {
-        console.error('Auth state sync error:', error);
+      } else {
+        // No Firebase user, clear local user
         setUser(null);
         localStorage.removeItem('user');
-        localStorage.removeItem('authToken');
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     });
 
     // Cleanup subscription
-    return () => {
-      console.log("Cleaning up auth subscription");
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   // Login function
@@ -104,18 +88,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         throw new Error(error);
       }
-
-      // Get Firebase token
-      const token = await firebaseUser?.getIdToken();
-      if (token) {
-        localStorage.setItem('authToken', token);
-      }
       
       // Then fetch user data from our API
-      const response = await apiRequest('POST', '/api/auth/login', { username, password }, true);
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
+      const response = await apiRequest('POST', '/api/auth/login', { username, password });
       const userData = await response.json();
       
       // Combine Firebase and API data

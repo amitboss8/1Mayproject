@@ -9,69 +9,18 @@ async function throwIfResNotOk(res: Response) {
 
 export async function apiRequest(
   method: string,
-  path: string,
-  body?: any,
-  requiresAuth: boolean = false
+  url: string,
+  data?: unknown | undefined,
 ): Promise<Response> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
+  const res = await fetch(url, {
+    method,
+    headers: data ? { "Content-Type": "application/json" } : {},
+    body: data ? JSON.stringify(data) : undefined,
+    credentials: "include",
+  });
 
-  if (requiresAuth) {
-    const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('user');
-    
-    if (!token || !user) {
-      // Clear potentially stale data
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      throw new Error('Authentication required');
-    }
-    
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  try {
-    let response = await fetch(path, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-      credentials: 'include'
-    });
-
-    if (response.status === 401) {
-      // Try to refresh token
-      const firebaseUser = auth.currentUser;
-      if (firebaseUser) {
-        const newToken = await firebaseUser.getIdToken(true);
-        localStorage.setItem('authToken', newToken);
-        
-        // Retry request with new token
-        headers['Authorization'] = `Bearer ${newToken}`;
-        response = await fetch(path, {
-          method,
-          headers,
-          body: body ? JSON.stringify(body) : undefined,
-          credentials: 'include'
-        });
-      }
-
-      // If still unauthorized after refresh
-      if (response.status === 401) {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
-        throw new Error('Session expired');
-      }
-    }
-
-    return response;
-  } catch (error) {
-    if (error instanceof Error && error.message === 'Session expired') {
-      throw error;
-    }
-    throw new Error('Network error');
-  }
+  await throwIfResNotOk(res);
+  return res;
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
