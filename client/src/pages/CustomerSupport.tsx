@@ -160,15 +160,21 @@ const CustomerSupport: React.FC = () => {
                   </p>
                   <p className="flex items-center space-x-2 text-sm">
                     <i className="fas fa-envelope text-[#FF9933]"></i>
-                    <span>support@indianotp.in</span>
+                    <a href="mailto:support@indianotp.in" className="hover:text-[#FF9933] transition-colors">
+                      support@indianotp.in
+                    </a>
                   </p>
                   <p className="flex items-center space-x-2 text-sm mt-1">
                     <i className="fab fa-telegram text-[#0066CC]"></i>
-                    <span>@IndianOTPSupport</span>
+                    <a href="https://t.me/Indianotp_help" target="_blank" rel="noopener noreferrer" className="hover:text-[#0066CC] transition-colors">
+                      @Indianotp_help
+                    </a>
                   </p>
                   <p className="flex items-center space-x-2 text-sm mt-1">
                     <i className="fab fa-instagram text-[#E1306C]"></i>
-                    <span>indianotp.in</span>
+                    <a href="https://www.instagram.com/indianotp.in?igsh=c3RidXZrdXVuNHNi" target="_blank" rel="noopener noreferrer" className="hover:text-[#E1306C] transition-colors">
+                      indianotp.in
+                    </a>
                   </p>
                 </div>
               </CardContent>
