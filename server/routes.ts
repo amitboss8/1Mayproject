@@ -2,6 +2,8 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
+import fs from "fs";
+import path from "path";
 import { 
   insertUserSchema, 
   insertTransactionSchema, 
@@ -10,6 +12,21 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve sitemap.xml
+  app.get('/sitemap.xml', (req: Request, res: Response) => {
+    try {
+      const sitemapPath = path.join(process.cwd(), 'sitemap.xml');
+      if (fs.existsSync(sitemapPath)) {
+        res.setHeader('Content-Type', 'application/xml');
+        res.sendFile(sitemapPath);
+      } else {
+        res.status(404).send('Sitemap not found');
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Auth middleware
   const authenticate = async (req: Request, res: Response, next: Function) => {
     try {

@@ -166,6 +166,10 @@ const CustomerSupport: React.FC = () => {
                     <i className="fab fa-telegram text-[#0066CC]"></i>
                     <span>@IndianOTPSupport</span>
                   </p>
+                  <p className="flex items-center space-x-2 text-sm mt-1">
+                    <i className="fab fa-instagram text-[#E1306C]"></i>
+                    <span>indianotp.in</span>
+                  </p>
                 </div>
               </CardContent>
             </Card>
