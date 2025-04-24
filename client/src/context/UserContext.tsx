@@ -47,6 +47,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
+        console.log("Auth state changed:", firebaseUser?.email);
+        
         if (firebaseUser) {
           // Get fresh token
           const token = await firebaseUser.getIdToken(true);
@@ -58,14 +60,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const userData = await response.json();
             const updatedUser = {
               ...userData,
-              email: firebaseUser.email || undefined
+              email: firebaseUser.email || undefined,
+              isAuthenticated: true
             };
+            console.log("Setting user data:", updatedUser);
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
           } else {
             throw new Error('Failed to get user data');
           }
         } else {
+          console.log("No user logged in");
           setUser(null);
           localStorage.removeItem('user');
           localStorage.removeItem('authToken');
@@ -80,7 +85,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    return () => unsubscribe();
+    // Cleanup subscription
+    return () => {
+      console.log("Cleaning up auth subscription");
+      unsubscribe();
+    };
   }, []);
 
   // Login function

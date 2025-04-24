@@ -26,16 +26,48 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
-      <Route path="/home" component={Home} />
-      <Route path="/wallet" component={Wallet} />
-      <Route path="/get-otp" component={GetOTP} />
-      <Route path="/support" component={CustomerSupport} />
-      <Route path="/customer-support" component={CustomerSupport} />
+      <Route path="/home">
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/wallet">
+        <ProtectedRoute>
+          <Wallet />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/get-otp">
+        <ProtectedRoute>
+          <GetOTP />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/support">
+        <ProtectedRoute>
+          <CustomerSupport />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/customer-support">
+        <ProtectedRoute>
+          <CustomerSupport />
+        </ProtectedRoute>
+      </Route>
       <Route path="/contact" component={Contact} />
       <Route path="/terms" component={Terms} />
-      <Route path="/refer" component={Refer} />
-      <Route path="/history" component={History} />
-      <Route path="/sms-check" component={SmsCheck} />
+      <Route path="/refer">
+        <ProtectedRoute>
+          <Refer />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/history">
+        <ProtectedRoute>
+          <History />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/sms-check">
+        <ProtectedRoute>
+          <SmsCheck />
+        </ProtectedRoute>
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );
