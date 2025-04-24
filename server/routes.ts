@@ -162,7 +162,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/otp/generate", authenticate, async (req: Request, res: Response) => {
     try {
       const user = (req as any).user;
-      const cost = 1; // Cost per OTP
+      const { serviceId, serviceName, price } = req.body;
+      
+      // Default cost or use the price from the selected service
+      const cost = price ? parseFloat(price) : 1;
+      const service = serviceName || "Generic";
       
       // Check if user has enough balance
       if (user.balance < cost) {
@@ -178,23 +182,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      // Create transaction record
+      // Create transaction record with service info
       await storage.createTransaction({
         userId: user.id,
         amount: -cost,
         type: "deduct",
-        note: "OTP Generated"
+        note: `OTP Generated for ${service}`
       });
       
-      // Create OTP history record
+      // Create OTP history record with service info
       await storage.createOtpHistory({
         userId: user.id,
-        otp
+        otp,
+        serviceId,
+        serviceName: service
       });
       
       return res.status(200).json({
         otp,
         cost,
+        service,
         balance: updatedUser.balance
       });
     } catch (error) {

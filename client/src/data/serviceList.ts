@@ -1,0 +1,151 @@
+// Service options for OTP generation with prices
+
+export interface ServiceOption {
+  id: string;
+  name: string;
+  price: number;
+  category?: string;
+}
+
+export const serviceCategories = [
+  "Social Media",
+  "E-commerce",
+  "Payments",
+  "Food Delivery",
+  "Ride Sharing",
+  "Entertainment",
+  "Telecom",
+  "Travel",
+  "Education",
+  "Music",
+  "Banking",
+  "Dating",
+  "Jobs",
+  "Video Conferencing",
+  "VPN Services",
+  "Gaming",
+  "Health & Fitness",
+  "News & Media",
+  "Cloud Storage",
+  "Productivity",
+  "Others"
+];
+
+export const serviceList: ServiceOption[] = [
+  { id: "whatsapp", name: "WhatsApp", price: 2.98, category: "Social Media" },
+  { id: "facebook", name: "Facebook", price: 1.37, category: "Social Media" },
+  { id: "instagram", name: "Instagram", price: 2.40, category: "Social Media" },
+  { id: "telegram", name: "Telegram", price: 1.18, category: "Social Media" },
+  { id: "twitter", name: "Twitter", price: 2.16, category: "Social Media" },
+  { id: "gmail", name: "Gmail", price: 2.16, category: "Social Media" },
+  { id: "snapchat", name: "Snapchat", price: 1.45, category: "Social Media" },
+  { id: "amazon", name: "Amazon", price: 1.54, category: "E-commerce" },
+  { id: "flipkart", name: "Flipkart", price: 1.37, category: "E-commerce" },
+  { id: "phonepe", name: "PhonePe", price: 1.13, category: "Payments" },
+  { id: "paytm", name: "Paytm", price: 2.85, category: "Payments" },
+  { id: "zomato", name: "Zomato", price: 1.48, category: "Food Delivery" },
+  { id: "swiggy", name: "Swiggy", price: 2.66, category: "Food Delivery" },
+  { id: "uber", name: "Uber", price: 1.91, category: "Ride Sharing" },
+  { id: "ola", name: "Ola", price: 2.53, category: "Ride Sharing" },
+  { id: "youtube", name: "YouTube", price: 2.37, category: "Entertainment" },
+  { id: "netflix", name: "Netflix", price: 1.34, category: "Entertainment" },
+  { id: "hotstar", name: "Hotstar", price: 2.91, category: "Entertainment" },
+  { id: "airtel", name: "Airtel", price: 2.73, category: "Telecom" },
+  { id: "jio", name: "Jio", price: 1.42, category: "Telecom" },
+  { id: "irctc", name: "IRCTC", price: 2.64, category: "Travel" },
+  { id: "makemytrip", name: "MakeMyTrip", price: 1.88, category: "Travel" },
+  { id: "bookmyshow", name: "BookMyShow", price: 2.09, category: "Entertainment" },
+  { id: "linkedin", name: "LinkedIn", price: 1.51, category: "Social Media" },
+  { id: "redbus", name: "RedBus", price: 2.56, category: "Travel" },
+  { id: "mxplayer", name: "MX Player", price: 2.18, category: "Entertainment" },
+  { id: "tataneu", name: "TataNeu", price: 1.87, category: "E-commerce" },
+  { id: "cred", name: "CRED", price: 1.43, category: "Payments" },
+  { id: "dream11", name: "Dream11", price: 2.41, category: "Gaming" },
+  { id: "byjus", name: "Byju's", price: 1.62, category: "Education" },
+  { id: "unacademy", name: "Unacademy", price: 2.48, category: "Education" },
+  { id: "coursera", name: "Coursera", price: 1.17, category: "Education" },
+  { id: "udemy", name: "Udemy", price: 2.66, category: "Education" },
+  { id: "khanacademy", name: "Khan Academy", price: 1.73, category: "Education" },
+  { id: "spotify", name: "Spotify", price: 2.32, category: "Music" },
+  { id: "gaana", name: "Gaana", price: 1.95, category: "Music" },
+  { id: "wynk", name: "Wynk", price: 1.29, category: "Music" },
+  { id: "googlepay", name: "Google Pay", price: 2.67, category: "Payments" },
+  { id: "bhim", name: "BHIM", price: 1.89, category: "Payments" },
+  { id: "hdfcbank", name: "HDFC Bank", price: 2.54, category: "Banking" },
+  { id: "sbi", name: "SBI", price: 1.76, category: "Banking" },
+  { id: "icicibank", name: "ICICI Bank", price: 2.93, category: "Banking" },
+  { id: "axisbank", name: "Axis Bank", price: 2.03, category: "Banking" },
+  { id: "kotakbank", name: "Kotak Bank", price: 2.71, category: "Banking" },
+  { id: "bankofbaroda", name: "Bank of Baroda", price: 1.44, category: "Banking" },
+  { id: "yesbank", name: "Yes Bank", price: 1.96, category: "Banking" },
+  { id: "idfcfirst", name: "IDFC First", price: 2.79, category: "Banking" },
+  { id: "paypal", name: "PayPal", price: 2.05, category: "Payments" },
+  { id: "razorpay", name: "Razorpay", price: 1.83, category: "Payments" },
+  { id: "phonepebusiness", name: "PhonePe Business", price: 2.37, category: "Payments" },
+  { id: "meesho", name: "Meesho", price: 1.96, category: "E-commerce" },
+  { id: "ajio", name: "Ajio", price: 2.48, category: "E-commerce" },
+  { id: "myntra", name: "Myntra", price: 1.31, category: "E-commerce" },
+  { id: "nykaa", name: "Nykaa", price: 2.67, category: "E-commerce" },
+  { id: "tinder", name: "Tinder", price: 1.58, category: "Dating" },
+  { id: "bumble", name: "Bumble", price: 2.71, category: "Dating" },
+  { id: "trulymadly", name: "TrulyMadly", price: 1.85, category: "Dating" },
+  { id: "shaadi", name: "Shaadi.com", price: 2.23, category: "Dating" },
+  { id: "quackquack", name: "QuackQuack", price: 2.02, category: "Dating" },
+  { id: "naukri", name: "Naukri", price: 1.77, category: "Jobs" },
+  { id: "monster", name: "Monster", price: 2.36, category: "Jobs" },
+  { id: "indeed", name: "Indeed", price: 1.68, category: "Jobs" },
+  { id: "apna", name: "Apna", price: 2.91, category: "Jobs" },
+  { id: "upwork", name: "Upwork", price: 2.14, category: "Jobs" },
+  { id: "fiverr", name: "Fiverr", price: 1.45, category: "Jobs" },
+  { id: "freelancer", name: "Freelancer", price: 2.03, category: "Jobs" },
+  { id: "zoom", name: "Zoom", price: 2.64, category: "Video Conferencing" },
+  { id: "skype", name: "Skype", price: 1.19, category: "Video Conferencing" },
+  { id: "microsoftteams", name: "Microsoft Teams", price: 2.55, category: "Video Conferencing" },
+  { id: "digilocker", name: "Digilocker", price: 1.62, category: "Others" },
+  { id: "sonyliv", name: "SonyLIV", price: 1.85, category: "Entertainment" },
+  { id: "voot", name: "Voot", price: 2.61, category: "Entertainment" },
+  { id: "jiocinema", name: "JioCinema", price: 2.04, category: "Entertainment" },
+  { id: "dailyhunt", name: "Dailyhunt", price: 1.39, category: "News & Media" },
+  { id: "josh", name: "Josh", price: 2.22, category: "Social Media" },
+  { id: "sharechat", name: "ShareChat", price: 2.95, category: "Social Media" },
+  { id: "canva", name: "Canva", price: 1.74, category: "Productivity" },
+  { id: "pixlr", name: "Pixlr", price: 2.31, category: "Productivity" },
+  { id: "snapseed", name: "Snapseed", price: 2.07, category: "Productivity" },
+  { id: "picsart", name: "PicsArt", price: 1.68, category: "Productivity" },
+  { id: "duolingo", name: "Duolingo", price: 2.16, category: "Education" },
+  { id: "payoneer", name: "Payoneer", price: 2.45, category: "Payments" },
+  { id: "remitly", name: "Remitly", price: 1.93, category: "Payments" },
+  { id: "wise", name: "Wise", price: 2.84, category: "Payments" },
+  { id: "westernunion", name: "Western Union", price: 1.62, category: "Payments" },
+  { id: "phone.com", name: "Phone.com", price: 2.28, category: "Telecom" },
+  { id: "quora", name: "Quora", price: 2.79, category: "Social Media" },
+  { id: "hotstar_vip", name: "Hotstar VIP", price: 1.56, category: "Entertainment" },
+  { id: "jiosaavn", name: "JioSaavn", price: 2.33, category: "Music" },
+  { id: "gaana_plus", name: "Gaana Plus", price: 1.91, category: "Music" },
+  { id: "threads", name: "Threads", price: 2.34, category: "Social Media" },
+  { id: "signal", name: "Signal", price: 1.41, category: "Social Media" },
+  { id: "clubhouse", name: "Clubhouse", price: 1.76, category: "Social Media" },
+  { id: "bigbasket", name: "BigBasket", price: 2.12, category: "E-commerce" },
+  { id: "mobikwik", name: "Mobikwik", price: 1.65, category: "Payments" },
+  { id: "groww", name: "Groww", price: 2.68, category: "Banking" },
+  { id: "zerodha", name: "Zerodha", price: 2.82, category: "Banking" },
+  { id: "coinswitch", name: "CoinSwitch", price: 1.98, category: "Banking" },
+  { id: "nordvpn", name: "NordVPN", price: 2.98, category: "VPN Services" },
+  { id: "expressvpn", name: "ExpressVPN", price: 3.12, category: "VPN Services" },
+  { id: "surfshark", name: "Surfshark", price: 2.93, category: "VPN Services" },
+  { id: "bgmi", name: "BGMI", price: 3.05, category: "Gaming" },
+  { id: "freefire", name: "Free Fire Max", price: 2.89, category: "Gaming" }
+];
+
+// Helper function to get a service by ID
+export const getServiceById = (id: string): ServiceOption | undefined => {
+  return serviceList.find(service => service.id === id);
+};
+
+// Helper function to get services by category
+export const getServicesByCategory = (category: string): ServiceOption[] => {
+  if (category === "All") {
+    return serviceList;
+  }
+  return serviceList.filter(service => service.category === category);
+};

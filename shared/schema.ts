@@ -24,6 +24,8 @@ export const otpHistory = pgTable("otp_history", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
   otp: text("otp").notNull(),
+  serviceId: text("service_id"),
+  serviceName: text("service_name"),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
 });
 
@@ -53,6 +55,8 @@ export const insertTransactionSchema = createInsertSchema(transactions).pick({
 export const insertOtpHistorySchema = createInsertSchema(otpHistory).pick({
   userId: true,
   otp: true,
+  serviceId: true,
+  serviceName: true,
 });
 
 export const insertReferralSchema = createInsertSchema(referrals).pick({
