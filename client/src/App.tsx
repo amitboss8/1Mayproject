@@ -1,91 +1,49 @@
-import { Switch, Route, useLocation } from "wouter";
-import { queryClient } from "./lib/queryClient";
+import { UserProvider } from "./context/UserContext";
+import { ThemeProvider } from "./context/ThemeContext";
+import { Toaster } from "./components/ui/toaster";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { UserProvider } from "@/context/UserContext";
+import { queryClient } from "./lib/queryClient";
+import { Router, Route, Switch } from "wouter";
+import Landing from "./pages/Landing";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import GetOTP from "./pages/GetOTP";
+import History from "./pages/History";
+import Wallet from "./pages/Wallet";
+import SmsCheck from "./pages/SmsCheck";
+import Refer from "./pages/Refer";
+import Terms from "./pages/Terms";
+import Contact from "./pages/Contact";
+import CustomerSupport from "./pages/CustomerSupport";
+import NotFound from "./pages/not-found";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-import NotFound from "@/pages/not-found";
-import Landing from "@/pages/Landing";
-import Home from "@/pages/Home";
-import Wallet from "@/pages/Wallet";
-import GetOTP from "@/pages/GetOTP";
-import CustomerSupport from "@/pages/CustomerSupport";
-import Contact from "@/pages/Contact";
-import Terms from "@/pages/Terms";
-import Refer from "@/pages/Refer";
-import History from "@/pages/History";
-import SmsCheck from "@/pages/SmsCheck";
-import Login from "@/pages/Login";
-import Signup from "@/pages/Signup";
-
-function Router() {
-  return (
-    <Switch>
-      <Route path="/" component={Landing} />
-      <Route path="/login" component={Login} />
-      <Route path="/signup" component={Signup} />
-      <Route path="/home">
-        <ProtectedRoute>
-          <Home />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/wallet">
-        <ProtectedRoute>
-          <Wallet />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/get-otp">
-        <ProtectedRoute>
-          <GetOTP />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/support">
-        <ProtectedRoute>
-          <CustomerSupport />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/customer-support">
-        <ProtectedRoute>
-          <CustomerSupport />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/contact" component={Contact} />
-      <Route path="/terms" component={Terms} />
-      <Route path="/refer">
-        <ProtectedRoute>
-          <Refer />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/history">
-        <ProtectedRoute>
-          <History />
-        </ProtectedRoute>
-      </Route>
-      <Route path="/sms-check">
-        <ProtectedRoute>
-          <SmsCheck />
-        </ProtectedRoute>
-      </Route>
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
-
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <UserProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </UserProvider>
-      </ThemeProvider>
+      <UserProvider>
+        <ThemeProvider>
+          <Router>
+            <Switch>
+              <Route path="/" component={Landing} />
+              <Route path="/home" component={Home} />
+              <Route path="/login" component={Login} />
+              <Route path="/signup" component={Signup} />
+              <Route path="/get-otp" component={GetOTP} />
+              <Route path="/history" component={History} />
+              <Route path="/wallet" component={Wallet} />
+              <Route path="/sms-check" component={SmsCheck} />
+              <Route path="/refer" component={Refer} />
+              <Route path="/terms" component={Terms} />
+              <Route path="/contact" component={Contact} />
+              <Route path="/support" component={CustomerSupport} />
+              <Route component={NotFound} />
+            </Switch>
+          </Router>
+          <Toaster />
+        </ThemeProvider>
+      </UserProvider>
     </QueryClientProvider>
   );
 }
-
-export default App;
