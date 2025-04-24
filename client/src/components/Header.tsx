@@ -73,7 +73,38 @@ const Header: React.FC<HeaderProps> = ({
           
           <ThemeToggle />
           
-          {showNav && (
+          {/* Auth Buttons */}
+          {!isLoggedIn ? (
+            <div className="hidden md:flex space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/login')}
+                className="text-[#0066CC] border-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+              >
+                Login
+              </Button>
+              <Button 
+                size="sm"
+                onClick={() => navigate('/signup')}
+                className="bg-[#FF9933] hover:bg-opacity-90 text-white"
+              >
+                Sign Up
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={logout}
+              className="hidden md:flex items-center"
+            >
+              <span className="mr-2">Logout</span>
+              <i className="fas fa-sign-out-alt"></i>
+            </Button>
+          )}
+          
+          {(showNav || !isLoggedIn) && (
             <Button 
               variant="ghost" 
               size="icon"
@@ -87,15 +118,59 @@ const Header: React.FC<HeaderProps> = ({
       </div>
       
       {/* Mobile menu */}
-      {showNav && (
+      {(showNav || !isLoggedIn) && isMenuOpen && (
         <div className={cn(
           "md:hidden bg-white dark:bg-gray-900 pb-4 px-4 transition-all overflow-hidden",
-          isMenuOpen ? "max-h-40" : "max-h-0"
+          isMenuOpen ? "max-h-60" : "max-h-0"
         )}>
           <div className="flex flex-col space-y-3">
-            <Link href="#about" className="text-gray-600 dark:text-gray-400 py-2 hover:text-[#0066CC] dark:hover:text-gray-200 transition-all">About</Link>
-            <Link href="#features" className="text-gray-600 dark:text-gray-400 py-2 hover:text-[#0066CC] dark:hover:text-gray-200 transition-all">Features</Link>
-            <Link href="#support" className="text-gray-600 dark:text-gray-400 py-2 hover:text-[#0066CC] dark:hover:text-gray-200 transition-all">Support</Link>
+            {showNav && (
+              <>
+                <Link href="#about" className="text-gray-600 dark:text-gray-400 py-2 hover:text-[#0066CC] dark:hover:text-gray-200 transition-all">About</Link>
+                <Link href="#features" className="text-gray-600 dark:text-gray-400 py-2 hover:text-[#0066CC] dark:hover:text-gray-200 transition-all">Features</Link>
+                <Link href="#support" className="text-gray-600 dark:text-gray-400 py-2 hover:text-[#0066CC] dark:hover:text-gray-200 transition-all">Support</Link>
+              </>
+            )}
+            
+            {!isLoggedIn ? (
+              <>
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-1"></div>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-center py-2 text-[#0066CC] border-[#0066CC] hover:bg-[#0066CC] hover:text-white"
+                  onClick={() => {
+                    navigate('/login');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Login
+                </Button>
+                <Button 
+                  className="w-full justify-center py-2 bg-[#FF9933] hover:bg-opacity-90 text-white"
+                  onClick={() => {
+                    navigate('/signup');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-1"></div>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-center py-2 text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400"
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <span className="mr-2">Logout</span>
+                  <i className="fas fa-sign-out-alt"></i>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
