@@ -117,63 +117,108 @@ const Terms: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="max-w-3xl mx-auto mt-8">
-            <CardHeader>
-              <CardTitle>Frequently Asked Questions (FAQ)</CardTitle>
+          <Card className="max-w-3xl mx-auto mt-8 border-t-4 border-[#FF9933]">
+            <CardHeader className="space-y-2">
+              <CardTitle className="text-2xl font-bold text-center">Frequently Asked Questions</CardTitle>
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">Find answers to common questions about our services</p>
             </CardHeader>
-            <CardContent className="prose dark:prose-invert max-w-none">
-              <h3>What is IndianOTP.in?</h3>
-              <p>
-                IndianOTP.in is a professional SMS OTP verification service that provides temporary phone numbers for receiving verification codes. Our platform enables users to bypass phone verification requirements safely and securely.
-              </p>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-info-circle mr-2"></i>
+                    What is IndianOTP.in?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    IndianOTP.in is India's leading SMS OTP verification service, providing instant access to temporary phone numbers for secure verification needs. Our platform ensures safe and reliable OTP reception for all major services.
+                  </p>
+                </div>
 
-              <h3>How does the service work?</h3>
-              <p>
-                1. Select a service from our extensive list<br/>
-                2. Pay the specified amount (starting from ₹1.13)<br/>
-                3. Receive your OTP instantly<br/>
-                4. Use the OTP for your verification needs
-              </p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-cogs mr-2"></i>
+                    How does the service work?
+                  </h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center">
+                      <span className="bg-[#FF9933] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3">1</span>
+                      <p>Choose your desired service from our comprehensive list</p>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="bg-[#FF9933] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3">2</span>
+                      <p>Make a secure payment (starting at just ₹1.13)</p>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="bg-[#FF9933] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3">3</span>
+                      <p>Receive your OTP instantly</p>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="bg-[#FF9933] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3">4</span>
+                      <p>Complete your verification process</p>
+                    </div>
+                  </div>
+                </div>
 
-              <h3>Is this service legal?</h3>
-              <p>
-                Yes, our service is completely legal. We provide virtual numbers for legitimate verification purposes. However, users are responsible for using the service in accordance with local laws and regulations.
-              </p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-shield-alt mr-2"></i>
+                    Is this service legal and secure?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Yes, our service operates within legal frameworks, providing virtual numbers for legitimate verification purposes. We implement bank-grade security measures to protect all transactions and user data.
+                  </p>
+                </div>
 
-              <h3>What payment methods do you accept?</h3>
-              <p>
-                We accept all major UPI payment methods including Google Pay, PhonePe, Paytm, and other UPI-enabled apps. Payments are processed instantly and securely.
-              </p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-wallet mr-2"></i>
+                    What payment methods are accepted?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    We support all major UPI payment platforms including:
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-3">
+                    <div className="text-center">
+                      <i className="fab fa-google-pay text-2xl text-[#0066CC]"></i>
+                      <p className="text-sm mt-1">Google Pay</p>
+                    </div>
+                    <div className="text-center">
+                      <i className="fas fa-mobile-alt text-2xl text-[#0066CC]"></i>
+                      <p className="text-sm mt-1">PhonePe</p>
+                    </div>
+                    <div className="text-center">
+                      <i className="fas fa-money-bill-wave text-2xl text-[#0066CC]"></i>
+                      <p className="text-sm mt-1">Paytm</p>
+                    </div>
+                    <div className="text-center">
+                      <i className="fas fa-university text-2xl text-[#0066CC]"></i>
+                      <p className="text-sm mt-1">BHIM UPI</p>
+                    </div>
+                  </div>
+                </div>
 
-              <h3>How long does it take to receive an OTP?</h3>
-              <p>
-                OTPs are generated instantly upon successful payment. Our automated system ensures immediate delivery of verification codes.
-              </p>
-
-              <h3>Are my transactions secure?</h3>
-              <p>
-                Yes, we prioritize security. All transactions are encrypted, and we don't store sensitive payment information. Our platform uses industry-standard security protocols.
-              </p>
-
-              <h3>Can I get a refund?</h3>
-              <p>
-                Due to the instant nature of our service, we cannot provide refunds once an OTP has been generated. Please ensure you select the correct service before proceeding.
-              </p>
-
-              <h3>What if I don't receive my OTP?</h3>
-              <p>
-                In the rare case of OTP delivery issues, our 24/7 customer support team is available to assist you. Contact us immediately through our support channels.
-              </p>
-
-              <h3>Do you keep records of OTPs?</h3>
-              <p>
-                For security and privacy reasons, we do not permanently store OTPs. They are automatically deleted from our system after a short period.
-              </p>
-
-              <h3>Is there a limit to how many OTPs I can request?</h3>
-              <p>
-                While there's no strict limit, we monitor usage patterns to prevent abuse. Multiple requests within a short timeframe may be flagged for security review.
-              </p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-headset mr-2"></i>
+                    Need help or support?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Our dedicated support team is available 24/7 to assist you. In case of any issues with OTP delivery or other concerns, reach out to us immediately through our support channels.
+                  </p>
+                  <div className="mt-3 flex items-center space-x-4">
+                    <button className="flex items-center text-[#0066CC] hover:text-[#FF9933]">
+                      <i className="fas fa-envelope mr-2"></i>
+                      Email Support
+                    </button>
+                    <button className="flex items-center text-[#0066CC] hover:text-[#FF9933]">
+                      <i className="fas fa-comments mr-2"></i>
+                      Live Chat
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
             </CardContent>
           </Card>
         </div>
