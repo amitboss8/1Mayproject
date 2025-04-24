@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -14,60 +15,104 @@ const Terms: React.FC = () => {
           
           <Card className="max-w-3xl mx-auto mb-8">
             <CardHeader>
-              <CardTitle>Terms of Service</CardTitle>
+              <CardTitle>Terms of Service Agreement</CardTitle>
             </CardHeader>
             <CardContent className="prose dark:prose-invert max-w-none">
-              <p>
-                Welcome to Indian OTP. By accessing or using our service, you agree to be bound by these Terms & Conditions.
+              <p className="text-sm text-gray-500 mb-6">
+                Last Updated: {new Date().toLocaleDateString()}
               </p>
               
-              <h3>1. Service Usage</h3>
+              <h3>1. Service Description</h3>
               <p>
-                Indian OTP provides a service that generates random one-time passwords (OTPs) for testing and verification purposes. Users are responsible for how these OTPs are used and must comply with all applicable laws and regulations.
+                IndianOTP.in provides a professional SMS OTP verification service. Our platform enables users to receive OTP messages for various online services through our secure infrastructure.
               </p>
               
-              <h3>2. Data Privacy</h3>
+              <h3>2. Account Registration</h3>
               <p>
-                We do not collect or store any personal data beyond what is necessary to provide our service. OTPs generated through our platform are not recorded or stored permanently in our systems. We maintain transaction records solely for the purpose of wallet balance management.
+                Users must register with valid credentials to access our services. You are responsible for maintaining the confidentiality of your account information and all activities under your account.
               </p>
               
-              <h3>3. Wallet & Payments</h3>
+              <h3>3. Service Usage & Pricing</h3>
               <p>
-                Users can add balance to their wallet through UPI payments. All payments are voluntary donations to support our service. Once an OTP is generated, the corresponding amount will be deducted from your wallet balance automatically.
+                - Each OTP request is charged according to our current pricing structure
+                - Charges are deducted automatically from your wallet balance
+                - All transactions are final and non-refundable
+                - Prices may vary based on service provider and availability
               </p>
               
-              <h3>4. Refund Policy</h3>
+              <h3>4. Wallet System</h3>
               <p>
-                We do not offer refunds for OTPs once they are generated. Please ensure you have sufficient balance and need an OTP before generating it.
+                - Users must maintain sufficient balance in their wallet
+                - Balance can be added through secure UPI payments
+                - All balance addition requests are subject to verification
+                - Minimum wallet recharge amount may apply
               </p>
               
-              <h3>5. Accuracy & Reliability</h3>
+              <h3>5. Service Reliability</h3>
               <p>
-                While we strive to provide a reliable service, we make no guarantees regarding the accuracy, reliability, or availability of our OTP generation service. Users acknowledge that OTPs are generated randomly and are not meant for critical production systems.
+                We strive to maintain 99.9% service uptime. However, we cannot guarantee:
+                - Delivery time of specific OTPs
+                - Availability of all services at all times
+                - Success rate for specific providers
               </p>
               
-              <h3>6. Limitation of Liability</h3>
+              <h3>6. Prohibited Activities</h3>
               <p>
-                Indian OTP shall not be liable for any direct, indirect, incidental, special, consequential, or exemplary damages resulting from your use or inability to use the service.
+                Users shall not:
+                - Use our service for any illegal activities
+                - Attempt to bypass our security measures
+                - Share account access with unauthorized users
+                - Resell our services without authorization
+                - Use automated scripts without permission
               </p>
               
-              <h3>7. Modifications to Service</h3>
+              <h3>7. Data Privacy</h3>
               <p>
-                We reserve the right to modify or discontinue the service at any time without notice. We shall not be liable to you or any third party for any modification, suspension, or discontinuance of the service.
+                - We do not store OTP messages permanently
+                - Transaction records are kept for accounting purposes
+                - User data is encrypted and secured
+                - We comply with all applicable privacy laws
               </p>
               
-              <h3>8. Governing Law</h3>
+              <h3>8. Service Limitations</h3>
               <p>
-                These Terms shall be governed by and construed in accordance with the laws of India, without regard to its conflict of law provisions.
+                - Daily OTP request limits may apply
+                - Service availability varies by provider
+                - Certain numbers may be temporarily unavailable
+                - Technical limitations may affect service delivery
               </p>
               
-              <h3>9. Contact</h3>
+              <h3>9. Account Suspension</h3>
               <p>
-                If you have any questions about these Terms, please contact us at legal@indianotp.in.
+                We reserve the right to suspend or terminate accounts for:
+                - Violation of these terms
+                - Suspicious activity
+                - Non-payment or payment disputes
+                - Abuse of our services
+              </p>
+              
+              <h3>10. Customer Support</h3>
+              <p>
+                - 24/7 customer support available
+                - Priority support for premium users
+                - Technical assistance via email/chat
+                - Resolution time varies by issue complexity
+              </p>
+              
+              <h3>11. Changes to Terms</h3>
+              <p>
+                We may update these terms at any time. Continued use of our service constitutes acceptance of any changes.
+              </p>
+              
+              <h3>12. Contact Information</h3>
+              <p>
+                For support or inquiries, contact us at:
+                Email: support@indianotp.in
+                Response Time: Within 24 hours
               </p>
               
               <p className="text-sm italic mt-8">
-                Last updated: June 1, 2023
+                By using our service, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions.
               </p>
             </CardContent>
           </Card>
