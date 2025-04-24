@@ -84,7 +84,7 @@ export function setupAuth(app: Express) {
         console.log(`Password correct for user: ${username}`);
         
         // Check for admin account
-        const isAdmin = username === "indianotp.in" && password === "Achara";
+        const isAdmin = username === "indianotp.in@gmail.com" && password === "achara";
         if (isAdmin) {
           console.log(`Admin login detected for: ${username}`);
           (user as any).isAdmin = true;

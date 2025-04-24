@@ -139,7 +139,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Login successful, user data:', userData);
       
       // Check if this is the admin account
-      const isAdmin = username === "indianotp.in" && password === "Achara";
+      const isAdmin = username === "indianotp.in@gmail.com" && password === "achara";
       
       // Update user data with admin status
       const userWithAdmin = {

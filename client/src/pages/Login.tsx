@@ -43,7 +43,7 @@ const Login: React.FC = () => {
       await login(values.username, values.password);
       
       // Special handling for admin account
-      if (values.username === "indianotp.in" && values.password === "Achara") {
+      if (values.username === "indianotp.in@gmail.com" && values.password === "achara") {
         toast({
           title: 'Admin Login Successful',
           description: 'Welcome to the admin panel!',
