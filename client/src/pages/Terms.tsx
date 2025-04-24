@@ -120,10 +120,70 @@ const Terms: React.FC = () => {
           <Card className="max-w-3xl mx-auto mt-8 border-t-4 border-[#FF9933]">
             <CardHeader className="space-y-2">
               <CardTitle className="text-2xl font-bold text-center">Frequently Asked Questions</CardTitle>
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">Find answers to common questions about our services</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">Essential information about our OTP verification services</p>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-shield-alt mr-2"></i>
+                    What is IndianOTP's verification service?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    IndianOTP.in provides instant virtual phone numbers for receiving OTP verification codes. Our service is designed for testing and verification purposes, offering reliable and secure OTP reception across multiple platforms.
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-rupee-sign mr-2"></i>
+                    What are your service charges?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Our services are priced affordably starting from just ₹1.13 per OTP. Different services may have varying rates based on complexity and demand. All charges are transparently displayed before purchase.
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-wallet mr-2"></i>
+                    How does the wallet system work?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Add funds to your wallet using UPI payments (Google Pay, PhonePe, Paytm). The cost of each OTP is automatically deducted from your wallet balance. Maintain sufficient balance for uninterrupted service.
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-clock mr-2"></i>
+                    How fast is the OTP delivery?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Our system delivers OTPs instantly upon successful payment. The entire process typically takes just a few seconds, ensuring you can complete your verifications without delay.
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-lock mr-2"></i>
+                    Is the service secure?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Yes, we implement bank-grade security measures. All transactions are encrypted, and we don't store OTPs permanently. Your privacy and security are our top priorities.
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
+                    <i className="fas fa-headset mr-2"></i>
+                    What if I need support?
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Our dedicated customer support team is available 24/7. Contact us through email at support@indianotp.in for immediate assistance with any issues or concerns.
+                  </p>
+                </div>
+              </div>
                 <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold mb-3 flex items-center text-[#0066CC] dark:text-[#FF9933]">
                     <i className="fas fa-info-circle mr-2"></i>
