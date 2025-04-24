@@ -219,8 +219,6 @@ const Terms: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-            </CardContent>
-          </Card>
         </div>
       </main>
       
