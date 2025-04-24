@@ -44,33 +44,129 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
   const [, navigate] = useLocation();
 
-  // Check if user is logged in with Firebase
+  // Check if user is logged in and verify auth status with server
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        // Firebase user exists, check if we have the user in local storage
+    const checkAuth = async () => {
+      setIsLoading(true);
+      try {
+        // First check if we have a user in localStorage
         const storedUser = localStorage.getItem('user');
+        
         if (storedUser) {
           const userData = JSON.parse(storedUser);
           
-          // Add email from Firebase to the user data
-          const updatedUser = {
-            ...userData,
-            email: firebaseUser.email || undefined
-          };
-          
-          setUser(updatedUser);
+          // Verify user with the server
+          try {
+            // Call the /api/user endpoint with the user's ID to verify authentication
+            const headers: Record<string, string> = { 
+              "x-user-id": userData.id.toString() 
+            };
+            
+            const response = await fetch('/api/user', { 
+              method: 'GET',
+              headers,
+              credentials: 'include'
+            });
+            
+            if (response.ok) {
+              // User is authenticated with server
+              const serverUserData = await response.json();
+              
+              // Check if Firebase is also authenticated
+              const firebaseUser = auth.currentUser;
+              
+              // Update the user data with the server data and email from Firebase
+              const updatedUser = {
+                ...serverUserData,
+                email: firebaseUser?.email || userData.email,
+                isAdmin: userData.isAdmin // Preserve admin status
+              };
+              
+              setUser(updatedUser);
+              localStorage.setItem('user', JSON.stringify(updatedUser));
+            } else {
+              // Server authentication failed, check firebase
+              const firebaseUser = auth.currentUser;
+              if (firebaseUser) {
+                // Firebase auth exists but server session expired
+                // Try to log in again silently
+                const username = userData.username;
+                const email = `${username}@indianotp.in`;
+                
+                // Special handling for admin user
+                if (userData.isAdmin) {
+                  try {
+                    // Make a new login request to refresh auth
+                    const response = await apiRequest('POST', '/api/auth/login', { 
+                      username: "indianotp.in", 
+                      password: "Achara" 
+                    });
+                    
+                    if (response.ok) {
+                      const refreshedUserData = await response.json();
+                      const updatedUser = {
+                        ...refreshedUserData,
+                        email: firebaseUser.email,
+                        isAdmin: true
+                      };
+                      
+                      setUser(updatedUser);
+                      localStorage.setItem('user', JSON.stringify(updatedUser));
+                    } else {
+                      throw new Error("Failed to refresh admin session");
+                    }
+                  } catch (error) {
+                    console.error("Error refreshing admin session:", error);
+                    await logoutUser();
+                    setUser(null);
+                    localStorage.removeItem('user');
+                  }
+                } else {
+                  // For regular users, just clear the auth state for now
+                  // They will need to log in again
+                  await logoutUser();
+                  setUser(null);
+                  localStorage.removeItem('user');
+                }
+              } else {
+                // No Firebase user either, clear everything
+                setUser(null);
+                localStorage.removeItem('user');
+              }
+            }
+          } catch (error) {
+            console.error("Error verifying authentication:", error);
+            // Don't clear user on network errors to allow offline functionality
+          }
         } else {
-          // If we don't have user data in local storage but have a Firebase user,
-          // we'll log them out for consistency
-          logoutUser();
+          // Check Firebase auth state
+          const firebaseUser = auth.currentUser;
+          if (firebaseUser) {
+            // Firebase user exists but no local user data
+            // This is an inconsistent state - log out from Firebase
+            await logoutUser();
+          }
+          
+          setUser(null);
         }
-      } else {
-        // No Firebase user, clear local user
+      } catch (error) {
+        console.error("Authentication check error:", error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    // Run the auth check
+    checkAuth();
+    
+    // Also listen for Firebase auth changes
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (!firebaseUser) {
+        // If Firebase logs out, make sure we clear local state too
         setUser(null);
         localStorage.removeItem('user');
       }
-      setIsLoading(false);
     });
 
     // Cleanup subscription
